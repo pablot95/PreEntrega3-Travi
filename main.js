@@ -1,73 +1,107 @@
 
-let datosArray = JSON.parse(localStorage.getItem("data")) || [];
+const productos = [
+    {
+        id: 1,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug rosa",
+        description: "Tumbler marca Tiana color rosa",
+        precio: 22000,
+    },
+    {
+        id: 2,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug gris",
+        description: "Tumbler marca Tiana color gris",
+        precio: 22000,
+    },
+    {
+        id: 3,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug negra",
+        description: "Tumbler marca Tiana color negro",
+        precio: 22000,
+    },
+    {
+        id: 4,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug blanca",
+        description: "Tumbler marca Tiana color blanco",
+        precio: 22000,
+    },
+    {
+        id: 5,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug lila",
+        description: "Tumbler marca Tiana color lila",
+        precio: 22000,
+    },
+    {
+        id: 6,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug azul",
+        description: "Tumbler marca Tiana color azul",
+        precio: 22000,
+    },
+    {
+        id: 7,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug marron claro",
+        description: "Tumbler marca Tiana color marron claro",
+        precio: 22000,
+    },
+    {
+        id: 8,
+        image: "https://via.placeholder.com/1000",
+        nombre: "Tiana mug azul marino",
+        description: "Tumbler marca Tiana color azul marino",
+        precio: 22000,
+    },
 
-let entrada1 = document.getElementById('addDataButton');
-let entrada2 = document.getElementById('addDataButton2');
+]
 
-entrada1.addEventListener('click', function() {
-    agregarDato('Taylor Swift');
-});
+const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-entrada2.addEventListener('click', function() {
-    agregarDato('Metallica');
-});
 
-function agregarDato(evento) {
-    let data = Number(prompt(`Ingrese un número de entradas para ${evento}:`));
-    if (!isNaN(data) && data > 0) {
-        let eventoExistente = datosArray.find(item => item.evento === evento);
+const renderProductos = (arrayProductos) => {
+    let container = document.getElementById("containerPrincipal");
+    container.innerHTML = "";
 
-        if (eventoExistente) {
-            eventoExistente.data += data;
-        } else {
-            datosArray.push({ evento, data });
-        }
+    arrayProductos.forEach((producto) => {
 
-        actualizarLista();
-    } else {
-        alert("Por favor, ingrese un número válido.");
-    }
-    localStorage.setItem("data", JSON.stringify(datosArray));
-}
+    let productCard = document.createElement("div")
 
-function actualizarLista() {
-    const dataList = document.getElementById('dataList');
-    dataList.innerHTML = ''; 
+    productCard.className = "productCard"
 
-    datosArray.forEach((item, index) => {
-        let listItem = document.createElement('li');
-        listItem.textContent = `Cantidad de entradas para ${item.evento}: ${item.data}`;
+    productCard.innerHTML = 
+        `<img src="${producto.image}" alt="${producto.nombre}">
+        <h2>${producto.nombre}</h2>
+        <p>${producto.description}</p>
+        <p>Precio: $${producto.precio}</p>
+        <button onclick="agregarAlCarrito(${producto.id})">Agregar al carrito</button>
+    `;
 
-        let deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Eliminar';
-        deleteButton.classList.add('delete-button');
-        deleteButton.addEventListener('click', function() {
-            eliminarDato(index);
-        });
+    container.appendChild(productCard);
+    })
+};
 
-        let incrementButton = document.createElement('button');
-        incrementButton.textContent = 'Agregar entradas';
-        incrementButton.classList.add('increment-button');
-        incrementButton.addEventListener('click', function() {
-            incrementarDato(index);
-        });
-        listItem.appendChild(incrementButton);
-        listItem.appendChild(deleteButton);
-        dataList.appendChild(listItem);
+const agregarAlCarrito = (id) => {
+let productoCarrito = productos.find((elemento) => elemento.id ===id);
+
+carrito.push(productoCarrito)
+
+localStorage.setItem('carrito', JSON.stringify(carrito));
+};
+
+const buscar = document.getElementById("Buscar")
+
+if (buscar){
+    buscar.addEventListener("input", (evento) => {
+        let value = evento.target.value.toLowerCase();
+        let arrayFiltrado = productos.filter((producto) => 
+            producto.nombre.toLowerCase().includes(value)
+    );
+    renderProductos(arrayFiltrado)
     });
-    localStorage.setItem("data", JSON.stringify(datosArray));
 }
 
-function eliminarDato(index) {
-    datosArray.splice(index, 1);
-    actualizarLista();
-    localStorage.setItem("data", JSON.stringify(datosArray));
-}
-
-function incrementarDato(index) {
-    datosArray[index].data += 1;
-    actualizarLista();
-    localStorage.setItem("data", JSON.stringify(datosArray));
-}
-
-actualizarLista();
+renderProductos(productos)
